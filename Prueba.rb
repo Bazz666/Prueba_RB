@@ -2,16 +2,21 @@ require "uri"
 require "net/http"
 require "json"
 
-url = URI("http://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=1000&api_key=TB1j1Qlk3cXb7jyBO085cD4LizEVOgeCKbSnbcTf")
 
-https = Net::HTTP.new(url.host, url.port)
-https.use_ssl = true
+#url = URI("https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=1000&api_key=TB1j1Qlk3cXb7jyBO085cD4LizEVOgeCKbSnbcTf")
 
-request = Net::HTTP::Get.new(url)
+def request(address, api_key="TB1j1Qlk3cXb7jyBO085cD4LizEVOgeCKbSnbcTf") 
 
-response = https.request(request)
-puts response.read_body
+    url = URI("#{address}&api_key=#{api_key}")
 
-body = JSON.parse response.read_body  #llamamos al Json para ordenar nuestra base de datos
+    http = Net::HTTP.new(url.host, url.port)
+
+    request = Net::HTTP::Get.new(url)
+
+    response = http.request(request)
+    
+    body = JSON.parse response.read_body  #llamamos al Json para ordenar nuestra base de datos
+
+
 
 
