@@ -30,5 +30,6 @@ def build_web_page(request)
 
 end
 
-photos = build_web_page(request('https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=10')["photos"])
-File.write('mars_photos.html', photos.to_s)
+photos = build_web_page(request('https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=1000')["photos"]) # manipulando el link podemos acotar la cantidad de fotografias cambiando "photos?sol=1000" cambiando el 1000 por el numero de imagenes deseadas
+
+File.write('mars_Rovers_photos.html', photos.to_s)# le damos a la imagen el formato string para que nos las guarde como url
