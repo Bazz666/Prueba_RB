@@ -1,5 +1,5 @@
 require "uri"
-require "net/http"
+require "net/https"
 require "json"
 
 
@@ -8,15 +8,27 @@ require "json"
 def request(address, api_key="TB1j1Qlk3cXb7jyBO085cD4LizEVOgeCKbSnbcTf") 
 
     url = URI("#{address}&api_key=#{api_key}")
+    https = Net::HTTP.new(url.host, url.port)
 
-    http = Net::HTTP.new(url.host, url.port)
+    https.use_ssl = true
 
     request = Net::HTTP::Get.new(url)
+    response = https.request(request)
+    response.read_body
+    JSON.parse response.read_body  #llamamos al Json para ordenar nuestra base de datos
+end
 
-    response = http.request(request)
-    
-    body = JSON.parse response.read_body  #llamamos al Json para ordenar nuestra base de datos
+def build_web_page(request)
 
+    fotos = request.map{ |filter| filter['img_src'] } # filtramos solo la linea "img_src": "http://mars.....JPG"
+    html = "<html>\n<head>\n</head>\n\t<body>\n\t\t<ul>" # Abrimos formato html, dejamos el head vacio y abrimos el body generando una lista 
+    fotos.each do |img|
+    html += "\n\t\t\t<li><img src='#{img}'></li>\n" #iteramos con each para insertar cada "img_src" como item dentro del <ul>
+    end
+    html += "\t\t</ul>\n\t</body>\n</html>" #finalmente cerramos la lista desordenada, el body y el html
+    return html
 
+end
 
-
+photos = build_web_page(request('https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=10')["photos"])
+File.write('mars_photos.html', photos.to_s)
